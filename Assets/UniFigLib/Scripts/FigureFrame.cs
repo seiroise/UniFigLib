@@ -393,8 +393,8 @@ namespace UniFigLib {
 		/// <summary>
 		/// ボーン構造から最も大きい(長い)ボーンを取得する
 		/// </summary>
-		/// <returns>The root.</returns>
-		/// <param name="bones">Bones.</param>
+		/// <returns>ルートボーン</returns>
+		/// <param name="bones">入力ボーン</param>
 		private static BoneTree FindBigBone(PolygonBone[] bones) {
 
 			int maxDisIndex = 0;
@@ -415,28 +415,6 @@ namespace UniFigLib {
 		/// </summary>
 		/// <param name="root">ルートのボーン</param>
 		private static BoneTree MakeBoneTree(BoneTree root) {
-			/*
-			//準備
-			Queue<BoneTree> explored = new Queue<BoneTree>();
-			foreach(var c in root.children) {
-				explored.Enqueue(c);
-			}
-			//ルートから外に向かって木構造を作成する
-			BoneTree exp;
-			while(explored.Count > 0) {
-				exp = explored.Dequeue();
-				Debug.Log(string.Format("############ exp {0} ############", exp.bone.id));
-				//expの子ボーンの設定
-				foreach(var b in exp.bone.linkedBone) {
-					if(exp.parent.bone != b && !exp.parent.bone.linkedBone.Contains(b)) {
-						Debug.Log(string.Format("--- child {0} ---", b.id));
-						BoneTree childTree = new BoneTree(exp, b, new List<BoneTree>());
-						exp.children.Add(childTree);
-						explored.Enqueue(childTree);
-					}
-				}
-			}
-			*/
 			//準備
 			Queue<BoneTree> explored = new Queue<BoneTree>();
 			explored.Enqueue(root);
@@ -518,13 +496,11 @@ namespace UniFigLib {
 			}
 
 			//ボーンウェイトデータの変換
-			Debug.Log("<<<< Bone Weight >>>>");
 			BoneWeight[] bw = new BoneWeight[boneDatas.Length];
 			for(int i = 0; i < bw.Length; ++i) {
-				boneDatas[i].DebugPrint();
+				//boneDatas[i].DebugPrint();
 				bw[i] = boneDatas[i].ToBoneWeight();
 			}
-			Debug.Log("<<<< Bone Weight End >>>>");
 
 			//レンダラとの関連付け
 			var skin = root.GetComponent<SkinnedMeshRenderer>();
@@ -543,16 +519,15 @@ namespace UniFigLib {
 			return boneDict;
 		}
 
-		/*
 		/// <summary>
 		/// 操作用コントローラへの変換
 		/// </summary>
 		/// <returns>作成したコントローラ</returns>
 		public FigureFrameController ToController(GameObject figObj, Material mat) {
-			var boneCon = figObj.GetComponent<FigureFrameController>();
-			if(boneCon)
+			var ffCon = figObj.GetComponent<FigureFrameController>();
+			if(ffCon)
 				throw new System.ArgumentException("FigureBoneController already attached");
-			boneCon = figObj.AddComponent<FigureFrameController>();
+			ffCon = figObj.AddComponent<FigureFrameController>();
 
 			var boneDict = SetFrame(figObj.transform, mat);
 			//端ボーンの外側の端に検出用のオブジェクトを埋め込む
@@ -560,7 +535,6 @@ namespace UniFigLib {
 			foreach(var b in _bones) {
 				if(b.type == PolygonBone.Type.End) {
 					foreach(var pos in b.GetEnds()) {
-						Debug.Log(pos);
 						var obj = new GameObject("Bounds Detector").transform;
 						obj.SetParent(boneDict[b.id], true);
 						obj.position = pos;
@@ -568,13 +542,11 @@ namespace UniFigLib {
 					}
 				}
 			}
-
 			//パラメータの設定
-			boneCon.InitParameter(this, boneDict, endBoneOutObjs.ToArray());
-
-			return boneCon;
+			ffCon.InitParameter(this, boneDict, boneDict[_rootBone.bone.id], endBoneOutObjs);
+			return ffCon;
 		}
-		*/
+
 		/// <summary>
 		/// ルートのボーンの識別IDを受け取る
 		/// </summary>

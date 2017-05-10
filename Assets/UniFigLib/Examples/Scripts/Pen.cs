@@ -134,22 +134,11 @@ namespace UniFigLib.Examples {
 		/// </summary>
 		private void OnMeshAnimationEnd(Figure figure) {
 			if(!_figures.ContainsKey(figure)) return;
-			var figBone = FigureFrame.FromFigure(figure);
-
-			//ボーンの描画
-			var figObj = _figures[figure].gameObject;
-			foreach(var centers in figBone.GetBoneCenters()) {
-				var lineObj = new GameObject("Line: " + centers.Key);
-				lineObj.transform.SetParent(figObj.transform);
-				var line = lineObj.AddComponent<LineRenderer>();
-				var approx = Function.DouglasPeuckerApprox(new List<Vector3>(centers.Value), 2);
-				line.SetVertexCount(approx.Count);
-				line.SetPositions(approx.ToArray());
-				line.material = boneMat;
-				var color = new Color(Random.Range(0f, 0.6f), Random.Range(0f, 0.6f), Random.Range(0f, 0.6f), 0.7f);
-				line.SetColors(color, color);
-				line.SetWidth(0.2f, 0.2f);
-			}
+			//var figBone = FigureFrame.FromFigure(figure);
+			//var figObj = _figures[figure].gameObject;
+			//Destroy(figObj.GetComponent<MeshFilter>());
+			//Destroy(figObj.GetComponent<MeshRenderer>());
+			//var ffCon = figBone.ToController(figObj, figMat);
 		}
 	}
 }
