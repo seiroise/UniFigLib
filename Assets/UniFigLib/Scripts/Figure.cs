@@ -13,13 +13,14 @@ namespace UniFigLib {
 	public class Figure {
 
 		private Vertex[] _vertices;     //頂点情報
+		private int[] _indices;       //三角形情報
+		private Color[] _colors;        //色情報
+		private int _polyNum;           //ポリゴン数
+
 		public Vertex[] vertices { get { return _vertices; } }
 		public Vector3[] positions { get { return _vertices.Select(v => v.pos).ToArray(); } }
-		private int[] _indices;       //三角形情報
 		public int[] indices { get { return _indices; } }
-		private Color[] _colors;        //色情報
 		public Color[] colors { get { return _colors; } set { _colors = value; } }
-		private int _polyNum;           //ポリゴン数
 		public int polyNum { get { return _polyNum; } }
 
 		#region Constructor
@@ -61,6 +62,38 @@ namespace UniFigLib {
 			Color[] colors = new Color[vertices.Length];
 			for(int i = 0; i < colors.Length; ++i) colors[i] = color;
 			return new Figure(vertices, triangles, colors);
+		}
+
+		/// <summary>
+		/// 頂点リストを指定して新しくFigureデータを作成する。
+		/// 入力座標データは始点と終点つながっていない必要がある。
+		/// </summary>
+		public static Figure FromPositions(Vector3[] positions, Color color) {
+			return FromPositions(new List<Vector3>(positions), color);
+		}
+
+		/// <summary>
+		/// 頂点リストを指定して新しくFigureデータを作成する。
+		/// 入力座標データは始点と終点つながっていない必要がある。
+		/// </summary>
+		public static Figure FromPositions(List<Vector2> positions, Color color) {
+			List<Vector3> temp = new List<Vector3>();
+			for(int i = 0; i < positions.Count; ++i) {
+				temp.Add(positions[i]);
+			}
+			return FromPositions(temp, color);
+		}
+
+		/// <summary>
+		/// 頂点リストを指定して新しくFigureデータを作成する。
+		/// 入力座標データは始点と終点つながっていない必要がある。
+		/// </summary>
+		public static Figure FromPositions(Vector2[] positions, Color color) {
+			List<Vector3> temp = new List<Vector3>();
+			for(int i = 0; i < positions.Length; ++i) {
+				temp.Add(positions[i]);
+			}
+			return FromPositions(temp, color);
 		}
 
 		/// <summary>
